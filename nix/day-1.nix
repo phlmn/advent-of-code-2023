@@ -5,7 +5,7 @@ let
     strings = import ./utils/strings.nix;
     files = import ./utils/files.nix;
 
-    digits_map = {
+    digitsMap = {
       "0" = 0;
       "1" = 1;
       "2" = 2;
@@ -18,7 +18,7 @@ let
       "9" = 9;
     };
 
-    digit_literals_map = {
+    digitLiteralsMap = {
       "zero" = 0;
       "one" = 1;
       "two" = 2;
@@ -31,22 +31,22 @@ let
       "nine" = 9;
     };
 
-    find_all_and_map = map: line:
+    findAllAndMap = map: line:
       let
-        matches = strings.find_all line (builtins.attrNames map) 0;
+        matches = strings.findAll line (builtins.attrNames map) 0;
       in
         builtins.map (match: map.${match.text}) matches;
 
-    value_from_line = map: line:
+    valueFromLine = map: line:
       let
-        values = find_all_and_map map line;
+        values = findAllAndMap map line;
       in
         (lib.lists.head values * 10) + (lib.lists.last values);
 
-    sum_ints = builtins.foldl' (acc: val: acc + val) 0;
-    total_value = map: lines: sum_ints (builtins.map (l: value_from_line map l) lines);
+    sumInts = builtins.foldl' (acc: val: acc + val) 0;
+    totalValue = map: lines: sumInts (builtins.map (l: valueFromLine map l) lines);
 in
   builtins.toJSON {
-    part_1 = total_value digits_map (files.readLines ./inputs/day_1.txt);
-    part_2 = total_value (digits_map // digit_literals_map) (files.readLines ./inputs/day_1.txt);
+    part1 = totalValue digitsMap (files.readLines ./inputs/day_1.txt);
+    part2 = totalValue (digitsMap // digitLiteralsMap) (files.readLines ./inputs/day_1.txt);
   }
