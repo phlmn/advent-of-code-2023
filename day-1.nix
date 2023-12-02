@@ -31,27 +31,31 @@ let
     "nine" = 9;
   };
 
-  findAllAndMap = map: line:
-    let
-      matches = strings.findAll (builtins.attrNames map) line;
-    in
-      builtins.map (match: map.${match.text}) matches;
-
-  valueFromLine = map: line:
-    let
-      values = findAllAndMap map line;
-    in
-      (lib.lists.head values * 10) + (lib.lists.last values);
-
   sumInts = builtins.foldl' (acc: val: acc + val) 0;
-  totalValue = map: lines: sumInts (builtins.map (valueFromLine map) lines);
+
+  findAllAndParse = mapping: str:
+    lib.pipe str [
+      (strings.findAll (builtins.attrNames mapping))
+      (map (match: mapping.${match.text}))
+    ];
+
+  pipe2 = funcs: arg: lib.pipe arg funcs;
+
+  processLine = mapping: pipe2 [
+    (findAllAndParse mapping)
+    (digits: (lib.head digits * 10) + (lib.last digits))
+  ];
 in
   {
-    part1 = totalValue
-      digitsMap
-      (files.readLines ./inputs/day_1.txt);
+    part1 = lib.pipe ./inputs/day_1.txt [
+      files.readLines
+      (map (processLine digitsMap))
+      sumInts
+    ];
 
-    part2 = totalValue
-      (digitsMap // digitLiteralsMap)
-      (files.readLines ./inputs/day_1.txt);
+    part2 = lib.pipe ./inputs/day_1.txt [
+      files.readLines
+      (map (processLine (digitsMap // digitLiteralsMap)))
+      sumInts
+    ];
   }
