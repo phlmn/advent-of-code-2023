@@ -33,7 +33,7 @@ let
 
   findAllAndMap = map: line:
     let
-      matches = strings.findAll line (builtins.attrNames map) 0;
+      matches = strings.findAll (builtins.attrNames map) line;
     in
       builtins.map (match: map.${match.text}) matches;
 
