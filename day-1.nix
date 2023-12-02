@@ -4,6 +4,7 @@ let
   lib = pkgs.lib;
   strings = import ./utils/strings.nix;
   files = import ./utils/files.nix;
+  trivial = import ./utils/trivial.nix;
 
   digitsMap = {
     "0" = 0;
@@ -33,29 +34,26 @@ let
 
   sumInts = builtins.foldl' builtins.add 0;
 
-  findAllAndParse = mapping: str:
-    lib.pipe str [
-      (strings.findAll (builtins.attrNames mapping))
-      (map (match: mapping.${match.text}))
-    ];
+  findAllAndParse = mapping: trivial.pipe2 [
+    (strings.findAll (builtins.attrNames mapping))
+    (map (match: mapping.${match.text}))
+  ];
 
-  pipe2 = funcs: arg: lib.pipe arg funcs;
-
-  processLine = mapping: pipe2 [
+  processLine = mapping: trivial.pipe2 [
     (findAllAndParse mapping)
     (digits: (lib.head digits * 10) + (lib.last digits))
   ];
 in
-  {
-    part1 = lib.pipe ./inputs/day_1.txt [
-      files.readLines
-      (map (processLine digitsMap))
-      sumInts
-    ];
+{
+  part1 = lib.pipe ./inputs/day_1.txt [
+    files.readLines
+    (map (processLine digitsMap))
+    sumInts
+  ];
 
-    part2 = lib.pipe ./inputs/day_1.txt [
-      files.readLines
-      (map (processLine (digitsMap // digitLiteralsMap)))
-      sumInts
-    ];
-  }
+  part2 = lib.pipe ./inputs/day_1.txt [
+    files.readLines
+    (map (processLine (digitsMap // digitLiteralsMap)))
+    sumInts
+  ];
+}
