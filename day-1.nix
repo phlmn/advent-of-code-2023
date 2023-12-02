@@ -31,7 +31,7 @@ let
     "nine" = 9;
   };
 
-  sumInts = builtins.foldl' (acc: val: acc + val) 0;
+  sumInts = builtins.foldl' builtins.add 0;
 
   findAllAndParse = mapping: str:
     lib.pipe str [
