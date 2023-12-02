@@ -3,6 +3,7 @@ let
     pkgs = import <nixpkgs> {};
     lib = pkgs.lib;
     strings = import ./utils/strings.nix;
+    files = import ./utils/files.nix;
 
     digits_map = {
       "0" = 0;
@@ -46,6 +47,6 @@ let
     total_value = map: lines: sum_ints (builtins.map (l: value_from_line map l) lines);
 in
   builtins.toJSON {
-    part_1 = total_value digits_map (strings.lines (builtins.readFile ./inputs/day_1.txt));
-    part_2 = total_value (digits_map // digit_literals_map) (strings.lines (builtins.readFile ./inputs/day_1.txt));
+    part_1 = total_value digits_map (files.readLines ./inputs/day_1.txt);
+    part_2 = total_value (digits_map // digit_literals_map) (files.readLines ./inputs/day_1.txt);
   }
