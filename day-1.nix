@@ -46,7 +46,12 @@ let
   sumInts = builtins.foldl' (acc: val: acc + val) 0;
   totalValue = map: lines: sumInts (builtins.map (valueFromLine map) lines);
 in
-  builtins.toJSON {
-    part1 = totalValue digitsMap (files.readLines ./inputs/day_1.txt);
-    part2 = totalValue (digitsMap // digitLiteralsMap) (files.readLines ./inputs/day_1.txt);
+  {
+    part1 = totalValue
+      digitsMap
+      (files.readLines ./inputs/day_1.txt);
+
+    part2 = totalValue
+      (digitsMap // digitLiteralsMap)
+      (files.readLines ./inputs/day_1.txt);
   }
